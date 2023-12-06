@@ -1,6 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 const token = '6862366244:AAG-Md8kgNIotz3Kemw1o-hhhQprmQC8t98';
 const bot = new TelegramBot(token, { polling: true });
+const userStorage = {};
 
 
 var answerAddressCallbacks = {};
@@ -10,61 +11,61 @@ bot.onText(/\/start/, (msg, match) => {
 
     bot.sendMessage(chatId, `Xin chào ${username}. Welcome to ABC`, {
         "reply_markup": {
-            // inline_keyboard: [
-            //     [
-            //         {
-            //             text: "Join App",
-            //             web_app: { url: 'https://google.com' }
-            //         },
-            //         {
-            //             text: "Bước 1",
-            //             callback_data: "Bước 1",
-            //         },
-            //         {
-            //             text: "Bước 2",
-            //             callback_data: "Bước 2",
-            //         }
-            //     ]
-            // ]
-            keyboard: [
+            inline_keyboard: [
                 [
                     {
+                        text: "Join App",
+                        web_app: { url: 'https://google.com' }
+                    },
+                    {
                         text: "Bước 1",
-
+                        callback_data: "Bước 1",
                     },
                     {
                         text: "Bước 2",
-
+                        callback_data: "Bước 2",
                     }
                 ]
             ]
+            // keyboard: [
+            //     [
+            //         {
+            //             text: "Bước 1",
+
+            //         },
+            //         {
+            //             text: "Bước 2",
+
+            //         }
+            //     ]
+            // ]
         }
     });
 
 });
 
-bot.on('message', (msg) => {
-    const callback = answerAddressCallbacks[msg.chat.id];
-    if (callback) {
-        return callback(msg);
-    }
+// bot.on('message', (msg) => {
+//     const callback = answerAddressCallbacks[msg.chat.id];
+//     if (callback) {
+//         return callback(msg);
+//     }
 
-    const username = msg.from.username;
-    const chatId = msg.chat.id;
-    const textChat = msg.text;
+//     const username = msg.from.username;
+//     const chatId = msg.chat.id;
+//     const textChat = msg.text;
 
-    console.log(msg)
+//     console.log(msg)
 
-    if (textChat == 'Bước 1') {
-        bot.sendMessage(chatId, `Vui lòng tham gia vào nhóm telegram dưới đây : \n https://abc.com`);
+//     if (textChat == 'Bước 1') {
+//         bot.sendMessage(chatId, `Vui lòng tham gia vào nhóm telegram dưới đây : \n https://abc.com`);
 
-    }
+//     }
 
-    if (textChat == 'Bước 2') {
-        bot.sendMessage(chatId, `I love u`);
+//     if (textChat == 'Bước 2') {
+//         bot.sendMessage(chatId, `I love u`);
 
-    }
-})
+//     }
+// })
 
 bot.on('callback_query', async function onCallBackQuery(callBackQuery) {
 
@@ -75,14 +76,14 @@ bot.on('callback_query', async function onCallBackQuery(callBackQuery) {
     console.log(textChat)
 
     if (textChat == 'Bước 1') {
-        bot.sendMessage(chatId, `Vui lòng tham gia vào nhóm telegram dưới đây : \n https://abc.com`);
+        bot.sendMessage(chatId, `Vui lòng nhập tên`);
 
     }
 
     if (textChat == 'Bước 2') {
 
         //Validate 1    
-        bot.sendMessage(chatId, `AVDSFDFDF : \n \t https://abc.com`, {
+        bot.sendMessage(chatId, `Truy cập vào đi nè`, {
             "reply_markup": {
                 inline_keyboard: [
                     [
@@ -97,12 +98,20 @@ bot.on('callback_query', async function onCallBackQuery(callBackQuery) {
         );
 
     }
+    bot.once('text', (msg) => {
+        const userId = msg.from.id;
+        const userName = msg.text;
+
+        userStorage[userId] = { name: userName };
+
+        bot.sendMessage(chatId, `Cảm ơn bạn, ${userName}! Thông tin của bạn đã được lưu.`);
+
+
+    });
 })
 
 exports.abc = async () => {
 
-    bot.sendMessage('2045687463', `Vui lòng tham gia vào nhóm telegram dưới đây : \n https://abc.com`);
-
-
+    bot.sendMessage('2045687463', `Vui lòng nhập tên`);
 
 }
